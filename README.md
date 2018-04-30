@@ -18,4 +18,3 @@ The program should have methods that return the following:
 • The month with the most rain
 • The month with the least rain
 Demonstrate the class in a complete program. Do not perform input validation.
-
