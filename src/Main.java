@@ -1,4 +1,3 @@
-
 // Java Program by Robert Stepp and Freddie Krueger 05/20/2018
 /**
  * CS143 Team Project
@@ -36,7 +35,7 @@ import javax.swing.JOptionPane;
 
 public class Main {
 	private static HashMap<Integer, Double> rainfall = new HashMap<Integer, Double>();
-	private static PriorityQueue pq = new PriorityQueue();
+	private static PriorityQueue<Object> pq = new PriorityQueue<Object>();
 	private static ArrayList<Integer> dateArray = new ArrayList<Integer>();
 	static String[] menuOptions = { "Output every month", "Total rainfall",
 			"Average monthly rainfall", "Month with the most rain",
