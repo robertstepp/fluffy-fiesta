@@ -1,4 +1,4 @@
-// Java Program by Robert Stepp and Freddie Krueger 05/20/2018
+// Java Program by Robert Stepp and Freddy Krueger 05/20/2018
 /**
  * CS143 Team Project
  * 3. (Based on Gaddis programming challenges 7.1) Rainfall Class
@@ -20,7 +20,7 @@
  * • The month with the least rain
  * Demonstrate the class in a complete program. Do not perform input validation.
  * @author Robert Stepp
- * @author Freddie Krueger
+ * @author Freddy Krueger
  */
 
 import java.io.BufferedReader;
@@ -65,13 +65,17 @@ public class Main {
 			br = new BufferedReader(new FileReader(name));
 			while ((line = br.readLine()) != null) {
 				String[] tempStorage = line.split(",");
+				String[] trimStorage = new String[tempStorage.length];
+				for (int i = 0; i < tempStorage.length; i++) {
+					trimStorage[i] = tempStorage[i].trim();
+				}
 				rainfall.put(
-						Integer.parseInt(tempStorage[0]),
-						Double.parseDouble(tempStorage[1]));
-				findMax(Double.parseDouble(tempStorage[1]),
-						Integer.parseInt(tempStorage[0]));
-				findMin(Double.parseDouble(tempStorage[1]),
-						Integer.parseInt(tempStorage[0]));
+						Integer.parseInt(trimStorage[0]),
+						Double.parseDouble(trimStorage[1]));
+				findMax(Double.parseDouble(trimStorage[1]),
+						Integer.parseInt(trimStorage[0]));
+				findMin(Double.parseDouble(trimStorage[1]),
+						Integer.parseInt(trimStorage[0]));
 
 			}
 		} catch (FileNotFoundException e) {
@@ -278,6 +282,17 @@ public class Main {
 	public static double averageRainfall() {
 		double averageMonthlyRainfall = totalMonthlyRainfall / dateArray.size();
 		return averageMonthlyRainfall;
+	}
+
+	/**
+	 * Graphs the output of the rainfall per month. *
+	 * 
+	 * @param args
+	 * @return graph
+	 */
+	public static String graphRainfall(double rain) {
+		String builtGraph = "";
+		return builtGraph;
 	}
 
 	public static void main(String[] args) {
