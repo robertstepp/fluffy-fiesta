@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -44,6 +45,29 @@ public class Main {
 			"June", "July", "August", "September", "October", "November",
 			"December" };
 	static String fileName = "";
+	static HashMap<Integer, Character> rainfallGraphFill = new HashMap<Integer, Character>() {
+		{
+			put(500, '#');
+			put(100, '*');
+			put(50, '|');
+			put(25, '¦');
+			put(10, '!');
+			put(5, ':');
+			put(1, '.');
+		}
+	};
+	static HashMap<Integer, Integer> graphValues = new HashMap<Integer, Integer>() {
+		{
+			put(500, 0);
+			put(100, 0);
+			put(50, 0);
+			put(25, 0);
+			put(10, 0);
+			put(5, 0);
+			put(1, 0);
+		}
+	};
+	static Object[] keys = graphValues.keySet().toArray();
 	static Object menu = null;
 	static int monthMax = 0;
 	static int monthMin = 0;
@@ -127,10 +151,16 @@ public class Main {
 	 * 
 	 */
 	public static void returnRainfallMonthly() {
+		System.out.println("--Outputting the rainfall for all months.--");
+		System.out.printf("%-40s║%s\n", "Data", "Graph of data");
 		for (int j = 0; j < dateArray.size(); j++) {
-			System.out.print(parseMonth(dateArray.get(j)) + "\t");
-			System.out.println(rainfall.get(dateArray.get(j)));
+			parseRainfall(rainfall.get(dateArray.get(j)));
+			System.out.printf("%s had %.2f inches of rain.\t║%s\n",
+					parseMonth(dateArray.get(j)),
+					rainfall.get(dateArray.get(j)),
+					graphRainfall());
 		}
+		printGraphLegend();
 	}
 
 	/**
@@ -285,14 +315,132 @@ public class Main {
 	}
 
 	/**
+	 * Parses rainfall and fills graphValues
+	 * 
+	 */
+	public static void parseRainfall(double rain) {
+		emptyGraphValues();
+		double rain100 = rain * 100;
+		int rainChanged = (int) rain100;
+		while (rainChanged >= 500) {
+			double d = rainChanged / 500;
+			graphValues.put(500, (int) Math.floor(d));
+			rainChanged = rainChanged - (500 * graphValues.get(500));
+		}
+		while (rainChanged >= 100) {
+			double d = rainChanged / 100;
+			graphValues.put(100, (int) Math.floor(d));
+			rainChanged = rainChanged - (100 * graphValues.get(100));
+		}
+		while (rainChanged > 50) {
+			double d = rainChanged / 50;
+			graphValues.put(50, (int) Math.floor(d));
+			rainChanged -= (50 * graphValues.get(50));
+		}
+		while (rainChanged >= 25) {
+			double d = rainChanged / 25;
+			graphValues.put(25, (int) Math.floor(d));
+			rainChanged -= (25 * graphValues.get(25));
+		}
+		while (rainChanged >= 10) {
+			double d = rainChanged / 10;
+			graphValues.put(10, (int) Math.floor(d));
+			rainChanged -= (10 * graphValues.get(10));
+		}
+		while (rainChanged >= 5) {
+			double d = rainChanged / 5;
+			graphValues.put(5, (int) Math.floor(d));
+			rainChanged -= (5 * graphValues.get(5));
+		}
+		while (rainChanged >= 1) {
+			graphValues.put(1, rainChanged);
+			rainChanged -= rainChanged;
+		}
+
+	}
+
+	public static void emptyGraphValues() {
+		Object[] keys = graphValues.keySet().toArray();
+		for (int gV = 0; gV < graphValues.size(); gV++) {
+			graphValues.put((int) keys[gV], 0);
+		}
+	}
+
+	/**
+	 * Puts the keys from graphValues in order to display in descending order.
+	 */
+	public static void orderedGraphKeys() {
+		PriorityQueue keysOrdered = new PriorityQueue();
+		Stack<Integer> reverseKeys = new Stack<Integer>();
+		for (int kO = 0; kO < keys.length; kO++) {
+			keysOrdered.add(keys[kO]);
+		}
+		for (int kR = 0; kR < keys.length; kR++) {
+			reverseKeys.push((int) keysOrdered.remove());
+		}
+		for (int kT = 0; kT < keys.length; kT++) {
+			keys[kT] = reverseKeys.pop();
+		}
+	}
+
+	/**
 	 * Graphs the output of the rainfall per month. *
 	 * 
 	 * @param args
 	 * @return graph
 	 */
-	public static String graphRainfall(double rain) {
+	public static String graphRainfall() {
 		String builtGraph = "";
+		orderedGraphKeys();
+		for (int s = 0; s < keys.length; s++) {
+			for (int t = 0; t < graphValues.get(keys[s]); t++) {
+				builtGraph += rainfallGraphFill.get(keys[s]);
+			}
+		}
+
 		return builtGraph;
+	}
+
+	public static void printGraphLegend() {
+		int i = 0;
+		int j = 0;
+		int max = 0;
+		String test = String.format("|  %d = %s  |\n", keys[i],
+				rainfallGraphFill.get(keys[i]));
+		if (test.length() > max) {
+			max = test.length();
+		}
+		while (j < max) {
+			if (j == 0)
+				System.out.print("╔");
+			else if (j != max - 1)
+				System.out.print("═");
+			else if (j == max - 1)
+				System.out.print("╗");
+			j++;
+		}
+		String title = "Graph Legend";
+		for (title.length(); title.length() < max;) {
+			title = "║" + title + "║";
+		}
+		System.out.println("\n" + title);
+		j = 0;
+		while (i < keys.length) {
+			System.out.printf("║  %2s = %3d  ║\n",
+					rainfallGraphFill.get(keys[i]),
+					keys[i]);
+			i++;
+		}
+		while (j < max) {
+			if (j == 0)
+				System.out.print("╚");
+			else if (j != max - 1)
+				System.out.print("═");
+			else if (j == max - 1)
+				System.out.print("╝");
+			j++;
+		}
+		System.out.println();
 	}
 
 	public static void main(String[] args) {
