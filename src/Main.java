@@ -64,9 +64,9 @@ public class Main {
 	// Populates the priority queue to sort the dates.
 	private static void populatePQ() {
 		Object[] tempArray = rainfall.keySet().toArray(); // Puts the keys from
-															// the hashmap into
-															// a temporary
-															// array.
+		// the hashmap into
+		// a temporary
+		// array.
 		for (int i = 0; i < rainfall.keySet().size(); i++) {
 			pq.add(tempArray[i]);
 		}
@@ -103,19 +103,19 @@ public class Main {
 		if (menu.equals(menuOptions[0])) { // Return output for every month.
 			returnRainfallMonthly();
 		} else if (menu.equals(menuOptions[1])) { // Return total rainfall for
-													// all months combined.
+			// all months combined.
 			System.out.printf("The total rainfall was %.2f inches.",
 					totalMonthlyRainfall);
 		} else if (menu.equals(menuOptions[2])) { // Return average monthly
-													// rainfall.
+			// rainfall.
 			System.out.printf(
 					"The average rainfall was %.2f inches over %d months.\n",
 					averageRainfall(), dateArray.size());
 		} else if (menu.equals(menuOptions[3])) { // Return month with the most
-													// rain.
+			// rain.
 			mostRain();
 		} else if (menu.equals(menuOptions[4])) { // Return month with the least
-													// rain.
+			// rain.
 			leastRain();
 		} else if (menu.equals(menuOptions[5])) { // Return all above options.
 			System.out.println("--Outputting the rainfall for all months.--");
@@ -136,9 +136,8 @@ public class Main {
 		}
 	}
 
-	static String parseMonth(Integer date) { // Parses the month digits YYYYMM
-												// to the text version of the
-												// month.
+	// Parses the month digits YYYYMM to the text version of the month.
+	static String parseMonth(Integer date) {
 		String month = "";
 		String outputDate = "";
 		char[] dateNumArray = String.valueOf(date).toCharArray();
@@ -150,6 +149,7 @@ public class Main {
 		return outputDate;
 	}
 
+	// Finds the max rainfall and stores it and the date.
 	static void findMax(double rain, Integer date) {
 		if (rain > monthMaxRainfall) {
 			monthMaxRainfall = rain;
@@ -157,6 +157,7 @@ public class Main {
 		}
 	}
 
+	// Finds the min rainfall and stores it and the date.
 	static void findMin(double rain, Integer date) {
 		if (rain < monthMinRainfall) {
 			monthMinRainfall = rain;
@@ -164,6 +165,8 @@ public class Main {
 		}
 	}
 
+	// Outputs the month with the least rainfall. Includes an if statement for
+	// no rain.
 	static void leastRain() {
 		if (monthMinRainfall == 0.0) { // rain.
 			System.out.printf("%s had no measureable rainfall.\n",
@@ -173,11 +176,13 @@ public class Main {
 					parseMonth(monthMin), monthMinRainfall);
 	}
 
+	// Outputs the month with the most rainfall.
 	static void mostRain() {
 		System.out.printf("%s had the most rainfall at %.2f inches.\n",
 				parseMonth(monthMax), monthMaxRainfall);
 	}
 
+	// Calculates the total rainfall.
 	static void totalRainfall() {
 		for (int t = 0; t < dateArray.size(); t++) {
 			totalMonthlyRainfall = totalMonthlyRainfall
@@ -185,6 +190,7 @@ public class Main {
 		}
 	}
 
+	// Uses the total and dateArray to calculate the average rainfall.
 	static double averageRainfall() {
 		double averageMonthlyRainfall = totalMonthlyRainfall / dateArray.size();
 		return averageMonthlyRainfall;
@@ -197,7 +203,6 @@ public class Main {
 		populateDA();
 		totalRainfall();
 		chosenOutput();
-
 	}
 
 }
