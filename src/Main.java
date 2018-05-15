@@ -200,7 +200,6 @@ public class Main {
 			// rain.
 			leastRain();
 		} else if (menu.equals(menuOptions[5])) { // Return all above options.
-			System.out.println("--Outputting the rainfall for all months.--");
 			returnRainfallMonthly();
 			System.out.println(
 					"--Outputting the total rainfall for all months combined.--");
