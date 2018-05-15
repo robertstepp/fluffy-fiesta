@@ -36,16 +36,18 @@ import javax.swing.JOptionPane;
 
 public class Main {
 	private static HashMap<Integer, Double> rainfall = new HashMap<Integer, Double>();
+	// Used to sort the date into a descending order.
 	private static PriorityQueue<Object> pq = new PriorityQueue<Object>();
+	// Takes the output from Priority Queue in order.
 	private static ArrayList<Integer> dateArray = new ArrayList<Integer>();
-	static String[] menuOptions = { "Output every month", "Total rainfall",
-			"Average monthly rainfall", "Month with the most rain",
-			"Month with the least rain", "Output all previous choices" };
-	static String[] months = { "January", "February", "March", "April", "May",
-			"June", "July", "August", "September", "October", "November",
+	static String[] menuOptions = { "All months", "Total rainfall", "Average monthly rainfall", "Month with the most rain",
+			"Month with the least rain", "All previous choices" };
+	static String[] months = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
 			"December" };
 	static String fileName = "";
 	static HashMap<Integer, Character> rainfallGraphFill = new HashMap<Integer, Character>() {
+		private static final long serialVersionUID = 1L;
+
 		{
 			put(500, '#');
 			put(100, '*');
@@ -57,6 +59,8 @@ public class Main {
 		}
 	};
 	static HashMap<Integer, Integer> graphValues = new HashMap<Integer, Integer>() {
+		private static final long serialVersionUID = 1L;
+
 		{
 			put(500, 0);
 			put(100, 0);
@@ -68,12 +72,17 @@ public class Main {
 		}
 	};
 	static Object[] keys = graphValues.keySet().toArray();
-	static Object menu = null;
+	static Object menuChosen = null; // User input on the what data to display.
+	static double totalMonthlyRainfall = 0.0;
+	/**
+	 * Max and min use these to search. I believe this would be O(N) as it uses the
+	 * import function as parent source and sets these during.
+	 * 
+	 */
 	static int monthMax = 0;
 	static int monthMin = 0;
 	static double monthMaxRainfall = 0.0;
 	static double monthMinRainfall = 100.0;
-	static double totalMonthlyRainfall = 0.0;
 
 	/**
 	 * Imports the file
@@ -120,22 +129,17 @@ public class Main {
 	/**
 	 * Populates the priority queue to sort the dates.
 	 * 
-	 * 
 	 */
 	public static void populatePQ() {
-		Object[] tempArray = rainfall.keySet().toArray(); // Puts the keys from
-		// the hashmap into
-		// a temporary
-		// array.
+		Object[] tempArray = rainfall.keySet().toArray(); // Puts the keys from the hashmap into a temporary array.
 		for (int i = 0; i < rainfall.keySet().size(); i++) {
 			pq.add(tempArray[i]);
 		}
 	}
 
 	/**
-	 * Populates the date arraylist with sorted dates from priority queue (Early
-	 * to present).
-	 * 
+	 * Populates the date arraylist with sorted dates from priority queue (Early to
+	 * present).
 	 * 
 	 */
 	public static void populateDA() {
@@ -148,17 +152,12 @@ public class Main {
 	/**
 	 * Returns the amount of rainfall for every month.
 	 * 
-	 * 
 	 */
 	public static void returnRainfallMonthly() {
-		System.out.println("--Outputting the rainfall for all months.--");
 		System.out.printf("%-40s║%s\n", "Data", "Graph of data");
 		for (int j = 0; j < dateArray.size(); j++) {
 			parseRainfall(rainfall.get(dateArray.get(j)));
-			System.out.printf("%s had %.2f inches of rain.\t║%s\n",
-					parseMonth(dateArray.get(j)),
-					rainfall.get(dateArray.get(j)),
-					graphRainfall());
+			System.out.printf("%s had %.2f inches of rain.\t║%s\n", parseMonth(dateArray.get(j)), rainfall.get(dateArray.get(j)), graphRainfall());
 		}
 		printGraphLegend();
 	}
@@ -166,53 +165,43 @@ public class Main {
 	/**
 	 * Gets input from user of the filename and how they want the output.
 	 * 
-	 * 
 	 */
 	public static void input() {
-		fileName = JOptionPane.showInputDialog(null,
-				"Please enter filename:", "./src/Rainfall.csv");
-		menu = JOptionPane.showInputDialog(null,
-				"Choose output:", "Choose wisely",
-				JOptionPane.QUESTION_MESSAGE, null, menuOptions, null);
+		fileName = JOptionPane.showInputDialog(null, "Please enter filename:", "./src/Rainfall.csv");
+		menuChosen = JOptionPane.showInputDialog(null, "Choose output:", "Choose wisely", JOptionPane.QUESTION_MESSAGE, null, menuOptions, null);
 	}
 
 	/**
 	 * Takes the chosen output method and passes it to the associated method.
 	 * 
-	 * 
 	 */
 	public static void chosenOutput() {
-		if (menu.equals(menuOptions[0])) { // Return output for every month.
+		if (menuChosen.equals(menuOptions[0])) { // Return output for every month.
+			buildTitle((String) menuChosen);
 			returnRainfallMonthly();
-		} else if (menu.equals(menuOptions[1])) { // Return total rainfall for
-			// all months combined.
-			System.out.printf("The total rainfall was %.2f inches.",
-					totalMonthlyRainfall);
-		} else if (menu.equals(menuOptions[2])) { // Return average monthly
-			// rainfall.
-			System.out.printf(
-					"The average rainfall was %.2f inches over %d months.\n",
-					averageRainfall(), dateArray.size());
-		} else if (menu.equals(menuOptions[3])) { // Return month with the most
-			// rain.
+		} else if (menuChosen.equals(menuOptions[1])) { // Return total rainfall for all months combined.
+			buildTitle((String) menuChosen);
+			System.out.printf("The total rainfall was %.2f inches.", totalMonthlyRainfall);
+		} else if (menuChosen.equals(menuOptions[2])) { // Return average monthly rainfall.
+			buildTitle((String) menuChosen);
+			System.out.printf("The average rainfall was %.2f inches over %d months.\n", averageRainfall(), dateArray.size());
+		} else if (menuChosen.equals(menuOptions[3])) { // Return month with the most rain.
+			buildTitle((String) menuChosen);
 			mostRain();
-		} else if (menu.equals(menuOptions[4])) { // Return month with the least
-			// rain.
+		} else if (menuChosen.equals(menuOptions[4])) { // Return month with the least rain.
+			buildTitle((String) menuChosen);
 			leastRain();
-		} else if (menu.equals(menuOptions[5])) { // Return all above options.
+		} else if (menuChosen.equals(menuOptions[5])) { // Return all above options.
+			buildTitle((String) menuChosen);
+			buildTitle((String) menuOptions[0]);
 			returnRainfallMonthly();
-			System.out.println(
-					"--Outputting the total rainfall for all months combined.--");
-			System.out.printf("The total rainfall was %.2f inches.\n",
-					totalMonthlyRainfall);
-			System.out.println(
-					"--Outputting the average rainfall for all months combined.--");
-			System.out.printf(
-					"The average rainfall was %.2f inches over %d months.\n",
-					averageRainfall(), dateArray.size());
-			System.out.println("--Outputting the month with the most rain.--");
+			buildTitle((String) menuOptions[1]);
+			System.out.printf("The total rainfall was %.2f inches.\n", totalMonthlyRainfall);
+			buildTitle((String) menuOptions[2]);
+			System.out.printf("The average rainfall was %.2f inches over %d months.\n", averageRainfall(), dateArray.size());
+			buildTitle((String) menuOptions[3]);
 			mostRain();
-			System.out.println("--Outputting the month with the least rain.--");
+			buildTitle((String) menuOptions[4]);
 			leastRain();
 		}
 	}
@@ -230,9 +219,7 @@ public class Main {
 		char[] dateNumArray = String.valueOf(date).toCharArray();
 		int monthNum = Integer.parseInt(dateNumArray[4] + "" + dateNumArray[5]);
 		month = months[monthNum - 1];
-		outputDate = String.format("%s %s", month,
-				(dateNumArray[0] + "" + dateNumArray[1] + ""
-						+ dateNumArray[2] + "" + dateNumArray[3]));
+		outputDate = String.format("%s %s", month, (dateNumArray[0] + "" + dateNumArray[1] + "" + dateNumArray[2] + "" + dateNumArray[3]));
 		return outputDate;
 	}
 
@@ -267,18 +254,16 @@ public class Main {
 	}
 
 	/**
-	 * Outputs the month with the least rainfall. Includes an if statement for
-	 * no rain.
+	 * Outputs the month with the least rainfall. Includes an if statement for no
+	 * rain.
 	 * 
 	 * 
 	 */
 	public static void leastRain() {
 		if (monthMinRainfall == 0.0) { // rain.
-			System.out.printf("%s had no measureable rainfall.\n",
-					parseMonth(monthMin));
+			System.out.printf("%s had no measureable rainfall.\n", parseMonth(monthMin));
 		} else
-			System.out.printf("%s had the least rainfall at %.2f inches.\n",
-					parseMonth(monthMin), monthMinRainfall);
+			System.out.printf("%s had the least rainfall at %.2f inches.\n", parseMonth(monthMin), monthMinRainfall);
 	}
 
 	/**
@@ -287,8 +272,7 @@ public class Main {
 	 * 
 	 */
 	public static void mostRain() {
-		System.out.printf("%s had the most rainfall at %.2f inches.\n",
-				parseMonth(monthMax), monthMaxRainfall);
+		System.out.printf("%s had the most rainfall at %.2f inches.\n", parseMonth(monthMax), monthMaxRainfall);
 	}
 
 	/**
@@ -298,8 +282,7 @@ public class Main {
 	 */
 	public static void totalRainfall() {
 		for (int t = 0; t < dateArray.size(); t++) {
-			totalMonthlyRainfall = totalMonthlyRainfall
-					+ rainfall.get(dateArray.get(t));
+			totalMonthlyRainfall += rainfall.get(dateArray.get(t));
 		}
 	}
 
@@ -315,6 +298,9 @@ public class Main {
 
 	/**
 	 * Parses rainfall and fills graphValues
+	 * 
+	 * @param rain
+	 *            Used to convert from double * 100 to integer for graph creation.
 	 * 
 	 */
 	public static void parseRainfall(double rain) {
@@ -369,34 +355,27 @@ public class Main {
 	 * Puts the keys from graphValues in order to display in descending order.
 	 */
 	public static void orderedGraphKeys() {
-		PriorityQueue keysOrdered = new PriorityQueue();
+		PriorityQueue<Object> keysOrdered = new PriorityQueue<Object>();
 		Stack<Integer> reverseKeys = new Stack<Integer>();
-		for (int kO = 0; kO < keys.length; kO++) {
+		for (int kO = 0; kO < keys.length; kO++)
 			keysOrdered.add(keys[kO]);
-		}
-		for (int kR = 0; kR < keys.length; kR++) {
+		for (int kR = 0; kR < keys.length; kR++)
 			reverseKeys.push((int) keysOrdered.remove());
-		}
-		for (int kT = 0; kT < keys.length; kT++) {
+		for (int kT = 0; kT < keys.length; kT++)
 			keys[kT] = reverseKeys.pop();
-		}
 	}
 
 	/**
 	 * Graphs the output of the rainfall per month. *
 	 * 
-	 * @param args
 	 * @return graph
 	 */
 	public static String graphRainfall() {
 		String builtGraph = "";
 		orderedGraphKeys();
-		for (int s = 0; s < keys.length; s++) {
-			for (int t = 0; t < graphValues.get(keys[s]); t++) {
+		for (int s = 0; s < keys.length; s++)
+			for (int t = 0; t < graphValues.get(keys[s]); t++)
 				builtGraph += rainfallGraphFill.get(keys[s]);
-			}
-		}
-
 		return builtGraph;
 	}
 
@@ -404,11 +383,9 @@ public class Main {
 		int i = 0;
 		int j = 0;
 		int max = 0;
-		String test = String.format("|  %d = %s  |\n", keys[i],
-				rainfallGraphFill.get(keys[i]));
-		if (test.length() > max) {
+		String test = String.format("|   %d = %s   |\n", keys[i], rainfallGraphFill.get(keys[i]));
+		if (test.length() > max)
 			max = test.length();
-		}
 		while (j < max) {
 			if (j == 0)
 				System.out.print("╔");
@@ -420,12 +397,12 @@ public class Main {
 		}
 		String title = "Graph Legend";
 		for (title.length(); title.length() < max;) {
-			title = "║" + title + "║";
+			title = "║ " + title + " ║";
 		}
 		System.out.println("\n" + title);
 		j = 0;
 		while (i < keys.length) {
-			System.out.printf("║  %2s = %3d  ║\n",
+			System.out.printf("║   %2s = %3d   ║\n",
 					rainfallGraphFill.get(keys[i]),
 					keys[i]);
 			i++;
@@ -440,6 +417,14 @@ public class Main {
 			j++;
 		}
 		System.out.println();
+	}
+
+	public static void buildTitle(String option) {
+		option = " Outputting " + option.toLowerCase() + " ";
+		int sizeNeeded = option.length() * 2;
+		for (option.length(); option.length() < sizeNeeded;)
+			option = "◄" + option + "►";
+		System.out.println(option);
 	}
 
 	public static void main(String[] args) {
