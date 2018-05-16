@@ -377,18 +377,18 @@ public class Main {
 	public static void parseRainfall(double rain) {
 		emptyGraphValues();
 		orderedGraphKeys();
-		double rain100 = rain * 100;
+		double rain100 = Math.round(rain * 100);
 		int rainChanged = (int) rain100;
 		for (int rC = 0; rC < keys.length; rC++) { // rC = Rain Changed
 			int keyValue = (int) keys[rC];
 			while (rainChanged >= keyValue) {
 				if (rainChanged <= 4) {
 					graphValues.put(keyValue, rainChanged);
-					rainChanged -= graphValues.get(keyValue) * keyValue;
+					rainChanged -= rainChanged;
 				} else {
 					double d = rainChanged / keyValue;
 					graphValues.put(keyValue, (int) Math.floor(d));
-					rainChanged -= graphValues.get(keyValue) * keyValue;
+					rainChanged -= (graphValues.get(keyValue) * keyValue);
 				}
 
 			}
