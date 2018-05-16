@@ -202,12 +202,23 @@ public class Main {
 		}
 		System.out.println("\n" + title);
 		j = 0;
+		while (j < max) {
+			if (j == 0)
+				System.out.print("╠");
+			else if (j != max - 1)
+				System.out.print("═");
+			else if (j == max - 1)
+				System.out.print("╣\n");
+			j++;
+		}
+		j = 0;
 		while (i < keys.length) {
 			System.out.printf("║   %2s = %3d   ║\n",
 					rainfallGraphFill.get(keys[i]),
 					keys[i]);
 			i++;
 		}
+
 		while (j < max) {
 			if (j == 0)
 				System.out.print("╚");
@@ -237,7 +248,7 @@ public class Main {
 	 * 
 	 */
 	public static void leastRain() {
-		if (monthMinRainfall == 0.0) { // rain.
+		if (monthMinRainfall == 0.0) {
 			System.out.printf("%s had no measureable rainfall.\n", parseMonth(monthMin));
 		} else
 			System.out.printf("%s had the least rainfall at %.2f inches.\n", parseMonth(monthMin), monthMinRainfall);
@@ -259,15 +270,16 @@ public class Main {
 	public static void input() {
 		fileName = JOptionPane.showInputDialog(null, "Please enter filename:", "./src/Rainfall.csv");
 		menuChosen = JOptionPane.showInputDialog(null, "Choose output:", "Choose wisely", JOptionPane.QUESTION_MESSAGE, null, menuOptions, null);
+		importFile(fileName);
 	}
 
 	/**
 	 * Imports the file
+	 * https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 	 * 
 	 * @param name
 	 *            From input user supplied
 	 */
-	// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 	public static void importFile(String name) {
 		BufferedReader br = null;
 		String line = "";
@@ -301,6 +313,7 @@ public class Main {
 				}
 			}
 		}
+		populatePQ();
 	}
 
 	/**
@@ -312,6 +325,7 @@ public class Main {
 		for (int i = 0; i < rainfall.keySet().size(); i++) {
 			pq.add(tempArray[i]);
 		}
+		populateDA();
 	}
 
 	/**
@@ -324,6 +338,7 @@ public class Main {
 		for (int i = 0; i < pqSize; i++) {
 			dateArray.add((Integer) pq.remove());
 		}
+		orderedGraphKeys();
 	}
 
 	/**
@@ -376,7 +391,6 @@ public class Main {
 	 */
 	public static void parseRainfall(double rain) {
 		emptyGraphValues();
-		orderedGraphKeys();
 		double rain100 = Math.round(rain * 100);
 		int rainChanged = (int) rain100;
 		for (int rC = 0; rC < keys.length; rC++) { // rC = Rain Changed
@@ -422,9 +436,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		input();
-		importFile(fileName);
-		populatePQ();
-		populateDA();
 		totalRainfall();
 		chosenOutput();
 	}
