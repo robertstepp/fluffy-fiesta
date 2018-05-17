@@ -94,10 +94,10 @@ public class Main {
 			returnRainfallMonthly();
 		} else if (menuChosen.equals(menuOptions[1])) { // Return total rainfall for all months combined.
 			buildTitle((String) menuChosen);
-			System.out.printf("The total rainfall was %.2f inches.", totalMonthlyRainfall);
+			System.out.printf("The total rainfall was %.2f inches over %d months.", totalMonthlyRainfall, dateArray.size());
 		} else if (menuChosen.equals(menuOptions[2])) { // Return average monthly rainfall.
 			buildTitle((String) menuChosen);
-			System.out.printf("The average rainfall was %.2f inches over %d months.\n", averageRainfall(), dateArray.size());
+			System.out.printf("The average rainfall was %.2f inches per month over %d months.\n", averageRainfall(), dateArray.size());
 		} else if (menuChosen.equals(menuOptions[3])) { // Return month with the most rain.
 			buildTitle((String) menuChosen);
 			mostRain();
@@ -109,9 +109,9 @@ public class Main {
 			buildTitle((String) menuOptions[0]);
 			returnRainfallMonthly();
 			buildTitle((String) menuOptions[1]);
-			System.out.printf("The total rainfall was %.2f inches.\n", totalMonthlyRainfall);
+			System.out.printf("The total rainfall was %.2f inches over %d months.\n", totalMonthlyRainfall, dateArray.size());
 			buildTitle((String) menuOptions[2]);
-			System.out.printf("The average rainfall was %.2f inches over %d months.\n", averageRainfall(), dateArray.size());
+			System.out.printf("The average rainfall was %.2f inches per month over %d months.\n", averageRainfall(), dateArray.size());
 			buildTitle((String) menuOptions[3]);
 			mostRain();
 			buildTitle((String) menuOptions[4]);
@@ -184,7 +184,9 @@ public class Main {
 		int i = 0;
 		int j = 0;
 		int max = 0;
-		String test = String.format("|   %d = %s   |\n", keys[i], rainfallGraphFill.get(keys[i]));
+		String test = String.format("║ %2s = %s ║\n",
+				rainfallGraphFill.get(keys[i]),
+				intToDouble((int) keys[i]) + " inches ");
 		if (test.length() > max)
 			max = test.length();
 		while (j < max) {
@@ -198,7 +200,7 @@ public class Main {
 		}
 		String title = "Graph Legend";
 		for (title.length(); title.length() < max;) {
-			title = "║ " + title + " ║";
+			title = "║    " + title + "    ║";
 		}
 		System.out.println("\n" + title);
 		j = 0;
@@ -213,9 +215,9 @@ public class Main {
 		}
 		j = 0;
 		while (i < keys.length) {
-			System.out.printf("║   %2s = %3d   ║\n",
+			System.out.printf("║ %2s  = %s ║\n",
 					rainfallGraphFill.get(keys[i]),
-					keys[i]);
+					intToDouble((int) keys[i]) + " inches ");
 			i++;
 		}
 
@@ -229,6 +231,20 @@ public class Main {
 			j++;
 		}
 		System.out.println();
+	}
+
+	/**
+	 * Changes keys int to double to display inches of rain.
+	 * 
+	 * @param i
+	 *            keys[i] to convert.
+	 * @return String with a double formatted.
+	 */
+	public static String intToDouble(int i) {
+		double legend = 0;
+		legend = (double) i / 100;
+		String legendParsed = String.format("%.2f", legend);
+		return legendParsed;
 	}
 
 	/**
@@ -339,6 +355,7 @@ public class Main {
 			dateArray.add((Integer) pq.remove());
 		}
 		orderedGraphKeys();
+		totalRainfall();
 	}
 
 	/**
@@ -436,7 +453,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		input();
-		totalRainfall();
 		chosenOutput();
 	}
 
